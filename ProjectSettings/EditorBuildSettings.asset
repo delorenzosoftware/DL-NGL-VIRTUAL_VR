@@ -1,0 +1,13 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/HelloWorldVR/Scenes/HelloWorldVR.unity
+    guid: 689591321f710d34c9e56a04faf25243
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: dba4b1c4a68ebf645a3fc0c2a64c39e3, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 367e37138de998e4f98ddae8852115d5, type: 2}
