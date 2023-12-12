@@ -10,16 +10,17 @@ public class ReadData : MonoBehaviour
     void Start()
     {
         Coroutine coroutine = StartCoroutine(CopyDatabase());
-        
+
     }
-   
+
     public void HandlePointerEvent(PointerEvent pointerEvent)
     {
         Debug.Log("HandlePointerEvent Iniciado");
 
         if (pointerEvent.Type == PointerEventType.Select)
         {
-            Debug.Log("botão clicado");
+            Debug.Log("botao clicado");
+            CreateDBScript createDBScript = GetComponent<CreateDBScript>();
             createDBScript.completedExeperiment(CreateDBScript.EXEPERIMENT_2);
         }
     }
@@ -47,4 +48,5 @@ public class ReadData : MonoBehaviour
         createDBScript.completedExeperiment(CreateDBScript.EXEPERIMENT_1);
         createDBScript.completedExeperiment(CreateDBScript.EXEPERIMENT_3);
     }
+   
 }

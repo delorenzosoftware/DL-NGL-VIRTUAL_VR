@@ -11,7 +11,7 @@ class CopyToStreamingAssets : IPreprocessBuildWithReport
     public void OnPreprocessBuild(BuildReport report)
     {
         string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string sourcePath = Path.Combine(documentsPath, "DataBase.db"); // Substitua pelo caminho real do seu arquivo.
+        string sourcePath = Path.Combine("C:/DLwspNGL/dlwspdb", "ARVRlaunch.db"); // Substitua pelo caminho real do seu arquivo.
         string destPath = Path.Combine(Application.dataPath, "StreamingAssets/DataBase.db"); // Substitua pelo nome desejado no StreamingAssets.
 
         // Certifique-se de que o diretório de destino exista

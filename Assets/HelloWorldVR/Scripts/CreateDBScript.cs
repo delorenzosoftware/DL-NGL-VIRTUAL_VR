@@ -6,6 +6,7 @@ using System.Collections;
 using System;
 using System.IO;
 using SimpleFileBrowser;
+using UnityEditor;
 
 public class CreateDBScript : MonoBehaviour {
 
@@ -15,12 +16,12 @@ public class CreateDBScript : MonoBehaviour {
     public const int EXEPERIMENT_1 = 1;
     public const int EXEPERIMENT_2 = 2;
     public const int EXEPERIMENT_3 = 3;
-
+    
 
     // Use this for initialization
     public void Start () {
         FileBrowser.HideDialog();
-        
+         
     }
 
     public IEnumerator CreateTableUserPerformances()
@@ -37,12 +38,13 @@ public class CreateDBScript : MonoBehaviour {
         dbcon.Open();
 
         dbcmd = dbcon.CreateCommand();
-        string SqlQuery = "CREATE TABLE if not exists user_performances ( " + 
-            "texperiment_no INTEGER, "+"ttimestamp INTEGER," + 
-            "texperiment_name TEXT," +
-            "tuser TEXT," +
-            "tar_vr_identifier INTEGER," +
-            "texperiment_done INTEGER)";
+       string SqlQuery = "CREATE TABLE if not exists ARVRexper ( " +
+            "Experiment_no INTEGER, " + 
+            "timestamp INTEGER," +
+            "experiment_name TEXT," +
+            "user TEXT," +
+            "ar_vr_identifier INTEGER," +
+            "experiment_done INTEGER)";
         dbcmd.CommandText = SqlQuery;
         reader = dbcmd.ExecuteReader();
 
@@ -50,7 +52,26 @@ public class CreateDBScript : MonoBehaviour {
         dbcon.Close();
         yield return null;
     }
+    IEnumerator CopyDatabase(UserExperiment userExperiment)
+    {
+        Debug.Log("copiar databases");
+        string sourcePath = Path.Combine(Application.persistentDataPath, "DataBase.db");
+        string targetPath = Path.Combine(Application.persistentDataPath, "ARVRresult.db");
+        Debug.Log("sourcePath - " + sourcePath);
 
+        if (File.Exists(targetPath))
+        {
+            File.Delete(targetPath);
+        }
+       
+        
+
+        File.Copy(sourcePath, targetPath);
+        //SimpleFileBrowser.CopyFile(sourcePath, targetPath);
+        yield return null;
+
+
+    }
     private IEnumerator InsertUserPerformance(UserExperiment userExperiment, bool experiment_done)
     {
         string conn = SetDataBaseClass.SetDataBase("DataBase.db");
@@ -71,15 +92,17 @@ public class CreateDBScript : MonoBehaviour {
 
         Debug.Log("insert into user_performances");
 
-        string SqlQuery = "insert into user_performances " +
-            "(experiment_no , timestamp, experiment_name, user, ar_vr_identifier, experiment_done) values "+
-            "(\"" + userExperiment.experimentNo + "\", \"" + timestamp + "\", \""+ userExperiment.experimentName + "\", \"" + userExperiment.userId + "\", \""+ ar_vr_identifier + "\", " + experiment_done + "); ";
+       string SqlQuery = "insert into ARVRexper " +
+                "(Experiment_no , timestamp, experiment_name, user, ar_vr_identifier, experiment_done) values " +
+                "(\"" + userExperiment.experimentNo + "\", \"" + timestamp + "\", \"" + userExperiment.experimentName + "\", \"" + userExperiment.userId + "\", \"" + ar_vr_identifier + "\", " + experiment_done + "); ";
         dbcmd.CommandText = SqlQuery;
         dbcmd.ExecuteReader();
 
         dbcon.Close();
 
-        yield return ExportDatabase();
+        //yield return ExportDatabase();
+        //yield return CopyDatabase(userExperiment);
+        yield return null;
 
         
     }
@@ -116,6 +139,7 @@ public class CreateDBScript : MonoBehaviour {
             catch (Exception e)
             {
                 Debug.LogError("Erro ao exportar o banco de dados: " + e.Message);
+                
             }
         }
     }
@@ -141,7 +165,7 @@ public class CreateDBScript : MonoBehaviour {
 
         dbcmd = dbcon.CreateCommand();
 
-        string SqlQuery = "select experiment_no, experiment_name, user from user_experiments limit 1";
+        string SqlQuery = "select experiment_no, experiment_name, user_id from ExperimentToDo where experiment_type = \"VR\" limit 1";
         dbcmd.CommandText = SqlQuery;
         reader = dbcmd.ExecuteReader();
 
@@ -159,7 +183,8 @@ public class CreateDBScript : MonoBehaviour {
         reader.Close();
         if (currenciExperimetNo == experiment_no)
         {
-            yield return InsertUserPerformance(userExperiment, true); 
+            yield return InsertUserPerformance(userExperiment, true);
+            yield return CopyDatabase(userExperiment);
         }
         else
         {
@@ -182,7 +207,7 @@ public class CreateDBScript : MonoBehaviour {
 
         dbcmd = dbcon.CreateCommand();
 
-        string SqlQuery = "select user, timestamp, experiment_done from user_performances";
+        string SqlQuery = "select user, timestamp, experiment_done from ARVRexper where Experiment_no = " + userExperimentNo + " and experiment_done = 1";
         dbcmd.CommandText = SqlQuery;
         reader = dbcmd.ExecuteReader();
 
@@ -202,6 +227,7 @@ public class CreateDBScript : MonoBehaviour {
         else
         {
             yield return getUserExperiment(userExperimentNo);
+            
         }
         
     }
